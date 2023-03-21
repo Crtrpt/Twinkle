@@ -1,0 +1,23 @@
+[Proxy.Local]
+Name = "Local"
+Desc = "相同的机器不同的端口"
+Url = "http://127.0.0.1:8081"
+Proxy = "http://127.0.0.1:18081"
+
+[Proxy.Local1]
+Name = "Local1"
+Desc = "相同的端口不同的机器"
+Url = "http://127.0.0.1:8081"
+Proxy = "http://127.0.0.1:18082"
+
+[Proxy.Local2]
+Name = "Local2"
+Desc = "根据域名区分代理到不同的机器"
+Url = "http://localhost:8081"
+Proxy = "http://127.0.0.1:18083"
+
+[Proxy.VLan]
+Name = "192.168.8.100"
+Desc = "测试本地局域网ip地址端口的代理"
+Url = "http://192.168.8.100:8081"
+Proxy = "http://127.0.0.1:18084"
