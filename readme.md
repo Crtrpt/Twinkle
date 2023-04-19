@@ -3,6 +3,15 @@ golang proxy server
 ---
 golang 实现的外网代理回调服务器 主要让外网访问内网api用途
 
+## 运行
+```golang
+git clone git@github.com:Crtrpt/gps.git
+cd gps
+go mod tidy
+go run cmd/gps/main.go
+```
+
+
 ## 流程图
 ![流程图](./flow.svg "工作流程图")
 
