@@ -21,6 +21,7 @@ go run cmd/gps/main.go
 - 远程代理
 
 ## 问题
+- 增加完善的测试用例
 - static 安全访问
 - ssh不稳定问题 断开的问题
 - 文档

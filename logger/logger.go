@@ -20,8 +20,6 @@ func init() {
 	errorWriteSyncer := zapcore.AddSync(getLogWriter(logDir+"error.log", 1, 3, 28))
 	infoWriteSyncer := zapcore.AddSync(getLogWriter(logDir+"info.log", 1, 3, 28))
 
-	//error写文件
-	//error info 写日志
 	core := zapcore.NewTee(
 		zapcore.NewCore(encoder, zapcore.AddSync(os.Stdout), zapcore.ErrorLevel),
 		zapcore.NewCore(encoder, zapcore.AddSync(os.Stdout), zapcore.InfoLevel),
@@ -35,7 +33,6 @@ func init() {
 }
 
 func getLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.WriteSyncer {
-	//file, _ := os.OpenFile("./log/error.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 644)
 	lumberjack := &lumberjack.Logger{
 		Filename:   filename,
 		MaxSize:    maxSize,

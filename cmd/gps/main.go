@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 
@@ -16,6 +15,5 @@ func main() {
 	ctx := context.Background()
 	app := gps.NewApp(ctx)
 	app.Run(ctx)
-	s := <-c
-	fmt.Printf("signal %s", s)
+	_ = <-c
 }
