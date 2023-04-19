@@ -1,5 +1,6 @@
 golang proxy server
-
+---
+[![Go](https://github.com/Crtrpt/gps/actions/workflows/go.yml/badge.svg)](https://github.com/Crtrpt/gps/actions/workflows/go.yml)
 ---
 golang 实现的外网代理回调服务器 主要让外网访问内网api用途
 
