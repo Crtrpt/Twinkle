@@ -6,6 +6,7 @@ golang proxy server
 ssh隧道代理
 
 
+# 注意
 如果需要sshd远程隧道 需要开启 sshd 隧道功能 否则无法监听外部接口
 ```
 GatewayPorts yes

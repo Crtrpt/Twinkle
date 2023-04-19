@@ -1,20 +1,37 @@
-localhost->remote:ssh
-remote->localhost:http
+ssh隧道:{
+    localhost->remote:ssh登录
+    remote->localhost:ssh隧道
+}
 
-remote->localhost:req
-localhost->remote:resp
+直接访问:{
+    browser->backend:req
+    browser<-backend:resp
+}
 
-localhost->backend:req
-backend->localhost:resp
+本地代理:{
+    browser->localhost:req
+    browser<-localhost:resp
+    localhost->backend:req
+    backend->localhost:resp
+}
 
-browser->remote:req
-browser<-remote:resp
+外网代理:{
+    browser->remote:req
+    browser<-remote:resp
+    remote->localhost:req
+    localhost->remote:resp
+    localhost->backend:req
+    backend->localhost:resp
 
-browser->localhost:req
-browser<-localhost:resp
 
-browser->backend:req
-browser<-backend:resp
+    remote.shape:cloud
+}
 
 
-remote.shape:cloud
+
+
+
+
+
+
+
