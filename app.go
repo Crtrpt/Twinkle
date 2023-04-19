@@ -3,15 +3,14 @@ package gps
 import (
 	"context"
 	"fmt"
-	"gps/logger"
-	"io"
 	"net"
 	"net/http"
 	"net/url"
-	"os"
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/Crtrpt/gps/logger"
 
 	"github.com/BurntSushi/toml"
 )
@@ -20,6 +19,7 @@ type App struct {
 	Config       *Config
 	ProxyMapLock *sync.Mutex
 	ProxyList    []*ProxyConfig
+	SSHTunnelMap map[string]any
 	ListenMap    map[string]any
 }
 
@@ -45,58 +45,6 @@ func (app *App) InitConfig(ctx context.Context) (res any, err error) {
 	return
 }
 
-// 判断对静态文件的代理
-func (app *App) ProxyStatic(resp http.ResponseWriter, r *http.Request, cfg *ProxyConfig, RequestURI string) bool {
-	staticUrl := fmt.Sprintf("%s%s", cfg.Root, RequestURI)
-	logger.Info("check static file  %+v", staticUrl)
-	_, err := os.Stat(staticUrl)
-	//如果没有错误 就输出文件信息
-	if err == nil {
-		//TODO 判断访问的目录是否是子目录 防止访问父目录文件
-		http.ServeFile(resp, r, staticUrl)
-		return true
-	}
-	return false
-}
-
-// 判断对后端文件的代理
-func (app *App) ProxyBackend(resp http.ResponseWriter, r *http.Request, cfg *ProxyConfig, RequestURI string) (err error) {
-
-	client := http.DefaultClient
-	backendUrl := fmt.Sprintf("%s%s", cfg.Proxy, RequestURI)
-	req, err := http.NewRequest(r.Method, backendUrl, r.Body)
-	if err != nil {
-		logger.Errorf("error %+v", err)
-		return err
-	}
-	//Header复制
-	req.Header = r.Header
-
-	if r.Header.Get("X-Forwarded-For") == "" {
-		req.Header.Set("X-Forwarded-For", r.RemoteAddr)
-	} else {
-		req.Header.Set("X-Forwarded-For", r.Header.Get("X-Forwarded-For")+","+r.RemoteAddr)
-	}
-
-	x, err := client.Do(req)
-	if err != nil {
-		logger.Errorf("backend error %+v", err)
-		return err
-	}
-	resp.WriteHeader(x.StatusCode)
-	data, err := io.ReadAll(x.Body)
-	if err != nil {
-		logger.Errorf("read backend err %v", err)
-		return err
-	}
-	_, err = resp.Write(data)
-	if err != nil {
-		logger.Errorf("write front err  %v", err)
-		return err
-	}
-	return nil
-}
-
 func (app *App) ServeHTTP(resp http.ResponseWriter, r *http.Request) {
 	defer func() {
 		err := recover()
@@ -107,17 +55,16 @@ func (app *App) ServeHTTP(resp http.ResponseWriter, r *http.Request) {
 	}()
 
 	url := fmt.Sprintf("%s://%s", "http", r.Host+r.RequestURI)
-	logger.Infof("frontend:  %+v", url)
 
 	for _, cfg := range app.ProxyList {
 		if strings.HasPrefix(url, cfg.Url) {
 			for k, v := range cfg.Header {
 				resp.Header().Add(k, v)
 			}
-			if app.ProxyStatic(resp, r, cfg, url[len(cfg.Url):]) {
+			if app.ProxyStatic(resp, r, cfg, url, url[len(cfg.Url):]) {
 				return
 			}
-			err := app.ProxyBackend(resp, r, cfg, url[len(cfg.Url):])
+			err := app.ProxyBackend(resp, r, cfg, url, url[len(cfg.Url):])
 			if err != nil {
 				resp.Write([]byte(err.Error()))
 			}
@@ -128,14 +75,6 @@ func (app *App) ServeHTTP(resp http.ResponseWriter, r *http.Request) {
 	resp.Write([]byte("can not find backend serve"))
 }
 
-func (app *App) ListenNewPort(cfg ProxyConfig, urlp *url.URL) {
-	addr := urlp.Host
-	logger.Infof("listen:%s", addr)
-	err := http.ListenAndServe(urlp.Host, app)
-	if err != nil {
-		logger.Errorf("监听服务器异常 %s %v", addr, err)
-	}
-}
 
 // Run 执行
 func (app *App) Run(ctx context.Context) (res any, err error) {
@@ -160,8 +99,14 @@ func (app *App) Run(ctx context.Context) (res any, err error) {
 
 		if app.ListenMap[key] == nil {
 			//设置为监听状态
-			app.ListenMap[key] = make(map[string]any, 0)
-			go app.ListenNewPort(cfg, urlP)
+
+			if cfg.Ssh.Auth != "" {
+				go app.ListenSSHTunnel(cfg)
+			} else {
+				app.ListenMap[key] = make(map[string]any, 0)
+				go app.ListenLocalPort(cfg, urlP)
+			}
+
 		}
 		app.ProxyList = append(app.ProxyList, &cfg)
 	}

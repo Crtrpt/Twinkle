@@ -7,6 +7,6 @@ import (
 var ConfigFile *string
 
 func InitFlag() {
-	ConfigFile = flag.String("f", "./conf/default.toml", "配置文件地址")
+	ConfigFile = flag.String("f", "./conf/app.toml", "配置文件地址")
 	flag.Parse()
 }

@@ -6,8 +6,13 @@ import (
 )
 
 func Handle(w http.ResponseWriter, r *http.Request) {
-	header, _ := json.Marshal(r.Header)
-	w.Write([]byte(header))
+	data := make(map[string]any, 0)
+	data["RequestURI"] = r.RequestURI
+	data["Method"] = r.Method
+	data["Header"] = r.Header.Clone()
+
+	dataStr, _ := json.Marshal(data)
+	w.Write([]byte(dataStr))
 }
 
 func main() {

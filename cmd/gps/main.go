@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"gps"
 	"os"
 	"os/signal"
+
+	"github.com/Crtrpt/gps"
 )
 
 func main() {

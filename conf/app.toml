@@ -1,4 +1,4 @@
-[Proxy.Local1]
+[proxy.Local1]
 Name = "Local1"
 Desc = "相同的机器不同的端口"
 Url = "http://127.0.0.1:8081/api/v1"
@@ -7,7 +7,7 @@ Root = "./static/"
 [Proxy.Local1.Header]
 ServerName = "gps"
 
-[Proxy.Local2]
+[proxy.Local2]
 Name = "Local2"
 Desc = "不同机器相同的后端"
 Url = "http://127.0.0.1:8082/api/v1"
@@ -16,9 +16,23 @@ Root = "./static/"
 [Proxy.Local2.Header]
 ServerName = "gps"
 
-[Proxy.Local3]
+[proxy.Local3]
 Name = "Local3"
 Desc = "相同机器相同端口不通路径"
 Url = "http://127.0.0.1:8081"
 Proxy = "http://127.0.0.1:8088/api/v2.0.0"
 Root = "./static/"
+
+[proxy.Local4]
+Name = "Local4"
+Desc = "远程机器的代理"
+Url = "http://123.249.115.24:8081"
+Proxy = "http://127.0.0.1:8088/api/v2.0.0"
+Root = "./static/"
+
+[proxy.Local4.ssh]
+Auth = "key"
+Host = "123.249.115.24:22"
+UserName = "root"
+PrivateKey = "./key/id_rsa"
+Addr = "0.0.0.0:8081"
