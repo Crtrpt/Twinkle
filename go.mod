@@ -1,4 +1,4 @@
-module http_bridge
+module gps
 
 go 1.19
 

@@ -1,4 +1,4 @@
-package http_bridge
+package gps
 
 import (
 	"flag"
