@@ -1,4 +1,4 @@
-package gps
+package twinkle
 
 import (
 	"io/ioutil"
@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Crtrpt/gps/logger"
+	"github.com/Crtrpt/twinkle/logger"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -46,7 +46,7 @@ func (app *App) ListenSSHTunnel(cfg ProxyConfig) {
 		return
 	}
 
-	logger.Infof("remote:%s", cfg.Ssh.Addr)
+	logger.Infof("remote:%s %s", cfg.Ssh.Host, cfg.Ssh.Addr)
 	urlParse, err := url.Parse(cfg.Ssh.Addr)
 	if err != nil {
 		logger.Errorf("url parse  failed: %s", err)

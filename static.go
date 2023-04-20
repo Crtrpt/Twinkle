@@ -1,11 +1,11 @@
-package gps
+package twinkle
 
 import (
 	"fmt"
 	"net/http"
 	"os"
 
-	"github.com/Crtrpt/gps/logger"
+	"github.com/Crtrpt/twinkle/logger"
 )
 
 // 判断对静态文件的代理

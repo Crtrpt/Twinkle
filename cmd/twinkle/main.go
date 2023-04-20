@@ -5,15 +5,15 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/Crtrpt/gps"
+	"github.com/Crtrpt/twinkle"
 )
 
 func main() {
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Kill, os.Interrupt)
-	gps.InitFlag()
+	twinkle.InitFlag()
 	ctx := context.Background()
-	app := gps.NewApp(ctx)
+	app := twinkle.NewApp(ctx)
 	app.Run(ctx)
 	_ = <-c
 	app.Stop(ctx)

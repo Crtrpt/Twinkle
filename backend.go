@@ -1,11 +1,11 @@
-package gps
+package twinkle
 
 import (
 	"fmt"
 	"io"
 	"net/http"
 
-	"github.com/Crtrpt/gps/logger"
+	"github.com/Crtrpt/twinkle/logger"
 )
 
 // 判断对后端文件的代理

@@ -1,4 +1,4 @@
-package gps
+package twinkle
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Crtrpt/gps/logger"
+	"github.com/Crtrpt/twinkle/logger"
 )
 
 func processTcpConn(conn net.Conn, cfg ProxyConfig) {

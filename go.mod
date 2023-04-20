@@ -1,4 +1,4 @@
-module github.com/Crtrpt/gps
+module github.com/Crtrpt/twinkle
 
 go 1.19
 

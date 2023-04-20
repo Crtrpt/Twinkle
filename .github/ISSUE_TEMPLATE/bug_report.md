@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: 问题报告
 about: Create a report to help us improve
 title: ''
 labels: ''
@@ -11,11 +11,8 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+配置文件
+使用的版本
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.

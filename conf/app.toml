@@ -5,7 +5,7 @@ Url = "http://127.0.0.1:8081/api/v1"
 Proxy = "http://127.0.0.1:8088/api/v1.0.0"
 Root = "./static/"
 [proxy.Local1.Header]
-ServerName = "gps"
+ServerName = "twinkle"
 
 [proxy.Local2]
 Name = "Local2"
@@ -14,7 +14,7 @@ Url = "http://127.0.0.1:8082/api/v1"
 Proxy = "http://127.0.0.1:8088/api/v1.0.0"
 Root = "./static/"
 [proxy.Local2.Header]
-ServerName = "gps"
+ServerName = "twinkle"
 
 [proxy.Local3]
 Name = "Local3"

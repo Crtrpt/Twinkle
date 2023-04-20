@@ -1,4 +1,4 @@
-package gps
+package twinkle
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Crtrpt/gps/logger"
+	"github.com/Crtrpt/twinkle/logger"
 
 	"github.com/BurntSushi/toml"
 )

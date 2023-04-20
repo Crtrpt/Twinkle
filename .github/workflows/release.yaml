@@ -24,5 +24,5 @@ jobs:
         pre_command: export CGO_ENABLED=0 && export GODEBUG=http2client=0
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        binary_name: "gps"
+        binary_name: "twinkle"
         extra_files: LICENSE readme.md conf

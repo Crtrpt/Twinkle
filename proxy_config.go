@@ -1,4 +1,4 @@
-package gps
+package twinkle
 
 type Config struct {
 	Proxy map[string]ProxyConfig `toml:"proxy"`

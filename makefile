@@ -1,8 +1,8 @@
 all:default_config build run
 
 build:
-	go build -ldflags "-s -w" -o bin/gps  cmd/gps/main.go
-	chmod +x bin/gps
+	go build -ldflags "-s -w" -o bin/twinkle  cmd/twinkle/main.go
+	chmod +x bin/twinkle
 
 default_config:
 	mkdir -p bin/key 
@@ -10,4 +10,4 @@ default_config:
 	cp conf/app.toml bin/conf/app.toml
 
 run:
-	cd bin && ./gps
+	cd bin && ./twinkle

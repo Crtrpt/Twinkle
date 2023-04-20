@@ -1,17 +1,20 @@
 golang proxy server
 ---
-[![Go](https://github.com/Crtrpt/gps/actions/workflows/go.yml/badge.svg)](https://github.com/Crtrpt/gps/actions/workflows/go.yml)
+[![Go](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml/badge.svg)](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml)
 ---
+
+```
+twinkle -h 显示命令行帮助文本
+```
 golang 实现的外网代理回调服务器 主要让外网访问内网api用途
 
 ## 运行
 ```golang
-git clone git@github.com:Crtrpt/gps.git
-cd gps
+git clone git@github.com:Crtrpt/twinkle.git
+cd twinkle
 go mod tidy
-go run cmd/gps/main.go
+go run cmd/twinkle/main.go
 ```
-
 
 ## 流程图
 ![流程图](./flow.svg "工作流程图")
