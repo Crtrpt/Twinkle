@@ -25,4 +25,4 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         binary_name: "gps"
-        extra_files: LICENSE readme.md conf/*
+        extra_files: LICENSE readme.md conf
