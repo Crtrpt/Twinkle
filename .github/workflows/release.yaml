@@ -21,6 +21,7 @@ jobs:
     - uses: wangyoucao577/go-release-action@v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        pre_command: export CGO_ENABLED=0 && export GODEBUG=http2client=0
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         binary_name: "gps"
