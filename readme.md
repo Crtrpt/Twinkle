@@ -3,8 +3,9 @@ golang proxy server
 [![Go](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml/badge.svg)](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml)
 ---
 
+执行命令显示帮助信息
 ```
-twinkle -h 显示命令行帮助文本
+twinkle -h
 ```
 golang 实现的外网代理回调服务器 主要让外网访问内网api用途
 
