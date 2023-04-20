@@ -1,7 +1,7 @@
-all:default_config build build_test_server run
+all:default_config build build_test_server
 
 build:
-	go build -ldflags "-s -w" -o bin/twinkle  cmd/twinkle/main.go
+	go build -race -ldflags "-s -w"  -gcflags "-m -l"  -o bin/twinkle  cmd/twinkle/main.go
 	chmod +x bin/twinkle
 
 build_test_server:
@@ -14,4 +14,4 @@ default_config:
 	cp conf/app.toml bin/conf/app.toml
 
 run:
-	cd bin && ./twinkle
+	go run -race -ldflags "-s -w"  -gcflags "-m -l"   cmd/twinkle/main.go
