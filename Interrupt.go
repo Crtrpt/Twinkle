@@ -12,9 +12,7 @@ import (
 )
 
 type Interrupt interface {
-	Run() error
-	SetHeader(key string, val any)
-	Do(resp http.ResponseWriter, r *http.Request, cfg *ProxyConfig, url, RequestURI string)
+	Run(app *App, resp http.ResponseWriter, req *http.Request, cfg *ProxyConfig, url, RequestURI string) error
 }
 
 type JavaScriptInterrupt struct {
@@ -22,6 +20,7 @@ type JavaScriptInterrupt struct {
 	Vm     *otto.Otto
 }
 
+// 创建一个vm实例
 func NewJavascriptVm(cfg *ProxyConfig) (*JavaScriptInterrupt, error) {
 	vm := otto.New()
 	source, err := ioutil.ReadFile(cfg.Interrupt)
@@ -38,6 +37,7 @@ func NewJavascriptVm(cfg *ProxyConfig) (*JavaScriptInterrupt, error) {
 	}, nil
 }
 
+// 运行vm对请求和返回进行动态的处理
 func (vm *JavaScriptInterrupt) Run(app *App, resp http.ResponseWriter, req *http.Request, cfg *ProxyConfig, url, RequestURI string) error {
 
 	//获取url
