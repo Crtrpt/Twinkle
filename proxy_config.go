@@ -19,5 +19,6 @@ type ProxyConfig struct {
 		Password   string //密码
 		PrivateKey string //私钥登陆
 		Addr       string //要监听的地址
+		Timeout    int    //超时秒数
 	} `toml:"ssh"`
 }

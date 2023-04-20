@@ -24,15 +24,20 @@ func (app *App) ListenSSHTunnel(cfg ProxyConfig) {
 	}
 
 	config := &ssh.ClientConfig{
-		// 服务器用户名
-		User: cfg.Ssh.UserName,
-		Auth: []ssh.AuthMethod{
-			ssh.PublicKeys(signer),
-		},
-		Timeout: 30 * time.Second,
+		User:    cfg.Ssh.UserName,
+		Auth:    []ssh.AuthMethod{},
+		Timeout: time.Duration(cfg.Ssh.Timeout) * time.Second,
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
 		},
+	}
+
+	if cfg.Ssh.Auth == "key" {
+		config.Auth = append(config.Auth, ssh.PublicKeys(signer))
+	}
+
+	if cfg.Ssh.Auth == "password" {
+		config.Auth = append(config.Auth, ssh.Password(cfg.Ssh.Password))
 	}
 
 	sshClientConn, err := ssh.Dial("tcp", sshCfg.Host, config)

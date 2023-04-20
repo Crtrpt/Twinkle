@@ -27,7 +27,7 @@ go run cmd/gps/main.go
 - ssh不稳定问题 断开的问题
 - 文档
 - 错误处理的问题
-- 增加对udp tcp的支持
+- 增加对udp的支持
 
 ## 注意
 如果需要sshd远程隧道 需要开启 sshd 隧道功能 否则无法监听外部端口
