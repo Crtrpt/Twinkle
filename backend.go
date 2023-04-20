@@ -10,7 +10,6 @@ import (
 
 // 代理到后端服务器
 func (app *App) ProxyBackend(resp http.ResponseWriter, r *http.Request, cfg *ProxyConfig, frontendUrl, RequestURI string) (err error) {
-
 	client := http.DefaultClient
 	backendUrl := fmt.Sprintf("%s%s", cfg.Proxy, RequestURI)
 	logger.Infof("F:%-50s B:%-50s", frontendUrl, backendUrl)
