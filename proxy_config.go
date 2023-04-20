@@ -5,7 +5,9 @@ type Config struct {
 }
 
 type ProxyConfig struct {
-	Name      string
+	Name      string            //当前代理的名称
+	Desc      string            //当前代理的描述信息
+	Enable    bool              //是否启用当前代理
 	Url       string            //要代理的地址
 	Proxy     string            //代理请求的地址
 	Header    map[string]string //输出的header

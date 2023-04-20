@@ -100,6 +100,9 @@ func GetTransportLayer(protocol string) string {
 // Run 执行
 func (app *App) Run(ctx context.Context) (res any, err error) {
 	for _, cfg := range app.Config.Proxy {
+		if !cfg.Enable {
+			continue
+		}
 		cfg := cfg
 		urlP, err := url.Parse(cfg.Url)
 		if err != nil {
@@ -108,8 +111,10 @@ func (app *App) Run(ctx context.Context) (res any, err error) {
 
 		port := urlP.Port()
 		host := urlP.Hostname()
-
 		names, err := net.LookupIP(host)
+		if err != nil {
+			logger.Errorf("ip解析错误 %v", err)
+		}
 
 		key := cfg.Ssh.Addr + GetTransportLayer(urlP.Scheme) + names[0].String() + ":" + port
 

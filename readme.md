@@ -49,6 +49,8 @@ GatewayPorts yes
 [proxy.Local1]
 Name = "Local1"
 Desc = "相同的机器不同的端口"
+# 是否开启代理
+Enable = true   
 # 要代理的http url
 Url = "http://127.0.0.1:8081/api/v1"
 # 要代理到的 后端地址
@@ -62,6 +64,8 @@ ServerName = "twinkle"
 [proxy.Local2]
 Name = "Local2"
 Desc = "不同机器相同的后端"
+# 是否开启代理
+Enable = true   
 Url = "http://127.0.0.1:8082/api/v1"
 Proxy = "http://127.0.0.1:8088/api/v1.0.0"
 Root = "./static/"
@@ -71,6 +75,8 @@ ServerName = "twinkle"
 [proxy.Local3]
 Name = "Local3"
 Desc = "相同机器相同端口不通路径"
+# 是否开启代理
+Enable = true   
 Url = "http://127.0.0.1:8081"
 Proxy = "http://127.0.0.1:8088/api/v2.0.0"
 Root = "./static/"
@@ -78,6 +84,8 @@ Root = "./static/"
 [proxy.Local4]
 Name = "Local4"
 Desc = "远程机器的代理"
+# 是否开启代理
+Enable = true   
 Url = "http://123.249.115.24:8081"
 Proxy = "http://127.0.0.1:8088/api/v2.0.0"
 Root = "./static/"
@@ -85,6 +93,8 @@ Root = "./static/"
 [proxy.Local4.ssh]
 Auth = "key"
 Host = "123.249.115.24:22"
+# 是否开启代理
+Enable = true   
 UserName = "root"
 PrivateKey = "./key/id_rsa"
 Addr = "http://0.0.0.0:8081"
@@ -92,6 +102,8 @@ Addr = "http://0.0.0.0:8081"
 [proxy.Local5]
 Name = "Local5"
 Desc = "执行JavaScript解释器中断"
+# 是否开启代理
+Enable = true   
 Url = "http://127.0.0.1:8083"
 Proxy = "http://127.0.0.1:8088/api/v2.0.0"
 Root = "./static/"
@@ -101,6 +113,8 @@ Interrupt ="./hook/round.js"
 [proxy.Local6]
 Name = "Local6"
 Desc = "tcp代理透传"
+# 是否开启代理
+Enable = true   
 Url = "tcp://127.0.0.1:8086"
 Proxy = "tcp://127.0.0.1:6379"
 
@@ -108,6 +122,8 @@ Proxy = "tcp://127.0.0.1:6379"
 [proxy.Local7]
 Name = "Local7"
 Desc = "ssh tcp 透传代理"
+# 是否开启代理
+Enable = true   
 Url = "tcp://127.0.0.1:8087"
 Proxy = "tcp://127.0.0.1:6379"
 [proxy.Local7.ssh]
