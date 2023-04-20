@@ -8,7 +8,7 @@ import (
 	"github.com/Crtrpt/twinkle/logger"
 )
 
-// 判断对后端文件的代理
+// 代理到后端服务器
 func (app *App) ProxyBackend(resp http.ResponseWriter, r *http.Request, cfg *ProxyConfig, frontendUrl, RequestURI string) (err error) {
 
 	client := http.DefaultClient
