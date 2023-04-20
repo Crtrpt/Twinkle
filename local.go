@@ -1,7 +1,6 @@
 package twinkle
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -10,6 +9,7 @@ import (
 	"github.com/Crtrpt/twinkle/logger"
 )
 
+// 处理tcp 链接
 func processTcpConn(conn net.Conn, cfg ProxyConfig) {
 	defer func() {
 		err := recover()
@@ -96,11 +96,12 @@ func processTcpConn(conn net.Conn, cfg ProxyConfig) {
 	targetExit <- struct{}{}
 }
 
+// 处理tcp 监听
 func processingTcp(listener net.Listener, cfg ProxyConfig) {
 	for {
 		conn, err := (listener).Accept()
 		if err != nil {
-			fmt.Printf("出现错误====")
+			logger.Error(err)
 			break
 		}
 
@@ -113,7 +114,7 @@ func processingUdp(listener net.Listener, cfg ProxyConfig) {
 	for {
 		conn, err := (listener).Accept()
 		if err != nil {
-			fmt.Printf("出现错误====")
+			logger.Error(err)
 			break
 		}
 
