@@ -4,7 +4,7 @@ Desc = "相同的机器不同的端口"
 Url = "http://127.0.0.1:8081/api/v1"
 Proxy = "http://127.0.0.1:8088/api/v1.0.0"
 Root = "./static/"
-[Proxy.Local1.Header]
+[proxy.Local1.Header]
 ServerName = "gps"
 
 [proxy.Local2]
@@ -13,7 +13,7 @@ Desc = "不同机器相同的后端"
 Url = "http://127.0.0.1:8082/api/v1"
 Proxy = "http://127.0.0.1:8088/api/v1.0.0"
 Root = "./static/"
-[Proxy.Local2.Header]
+[proxy.Local2.Header]
 ServerName = "gps"
 
 [proxy.Local3]
@@ -35,7 +35,7 @@ Auth = "key"
 Host = "123.249.115.24:22"
 UserName = "root"
 PrivateKey = "./key/id_rsa"
-Addr = "0.0.0.0:8081"
+Addr = "http://0.0.0.0:8081"
 
 [proxy.Local5]
 Name = "Local5"
@@ -44,3 +44,24 @@ Url = "http://127.0.0.1:8083"
 Proxy = "http://127.0.0.1:8088/api/v2.0.0"
 Root = "./static/"
 Interrupt ="./hook/round.js"
+
+
+[proxy.Local6]
+Name = "Local6"
+Desc = "tcp代理透传"
+Url = "tcp://127.0.0.1:8086"
+Proxy = "tcp://127.0.0.1:6379"
+
+
+[proxy.Local7]
+Name = "Local7"
+Desc = "ssh tcp 透传代理"
+Url = "tcp://127.0.0.1:8087"
+Proxy = "tcp://127.0.0.1:6379"
+[proxy.Local7.ssh]
+Auth = "key"
+Host = "123.249.115.24:22"
+UserName = "root"
+PrivateKey = "./key/id_rsa"
+Addr = "tcp://0.0.0.0:8082"
+

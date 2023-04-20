@@ -19,8 +19,8 @@ type App struct {
 	Config       *Config
 	ProxyMapLock *sync.Mutex
 	ProxyList    []*ProxyConfig
-	SSHTunnelMap map[string]any
-	ListenMap    map[string]any
+	SSHTunnelMap map[string]any //ssh 隧道
+	ListenMap    map[string]any //http 代理
 }
 
 func NewApp(ctx context.Context) *App {
@@ -87,6 +87,16 @@ func (app *App) ServeHTTP(resp http.ResponseWriter, r *http.Request) {
 	resp.Write([]byte("can not find backend serve"))
 }
 
+func GetTransportLayer(protocol string) string {
+	if protocol == "http" || protocol == "https" || protocol == "tcp" {
+		return "tcp"
+	}
+	if protocol == "udp" {
+		return "udp"
+	}
+	return ""
+}
+
 // Run 执行
 func (app *App) Run(ctx context.Context) (res any, err error) {
 	for _, cfg := range app.Config.Proxy {
@@ -95,27 +105,21 @@ func (app *App) Run(ctx context.Context) (res any, err error) {
 		if err != nil {
 			logger.Errorf("url解析错误 %v", err)
 		}
-		port := "80"
-		if urlP.Port() != "" {
-			port = urlP.Port()
-		}
-		host := "127.0.0.1"
-		if urlP.Host != "" {
-			host = urlP.Hostname()
-		}
+
+		port := urlP.Port()
+		host := urlP.Hostname()
 
 		names, err := net.LookupIP(host)
 
-		key := names[0].String() + ":" + port
+		key := cfg.Ssh.Addr + GetTransportLayer(urlP.Scheme) + names[0].String() + ":" + port
 
 		if app.ListenMap[key] == nil {
 			//设置为监听状态
-
 			if cfg.Ssh.Auth != "" {
 				go app.ListenSSHTunnel(cfg)
 			} else {
 				app.ListenMap[key] = make(map[string]any, 0)
-				go app.ListenLocalPort(cfg, urlP)
+				go app.ListenHttpPort(urlP.Scheme, cfg, urlP)
 			}
 
 		}

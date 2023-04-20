@@ -2,6 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "启动",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/gps/main.go",
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "启动调试",
             "type": "go",
             "request": "launch",

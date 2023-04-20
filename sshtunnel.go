@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/Crtrpt/gps/logger"
@@ -40,12 +41,47 @@ func (app *App) ListenSSHTunnel(cfg ProxyConfig) {
 		return
 	}
 
-	listener, err := sshClientConn.Listen("tcp", cfg.Ssh.Addr)
-
+	logger.Infof("remote:%s", cfg.Ssh.Addr)
+	urlParse, err := url.Parse(cfg.Ssh.Addr)
 	if err != nil {
-		logger.Errorf("tcp监听异常%v", err.Error())
+		logger.Errorf("url parse  failed: %s", err)
 		return
 	}
-	server := &http.Server{Addr: cfg.Ssh.Addr, Handler: app}
-	server.Serve(listener)
+
+	if urlParse.Scheme == "udp" {
+		listener, err := sshClientConn.Listen("udp", urlParse.Host)
+		//暂时不支持的协议
+		if err != nil {
+			logger.Errorf("udp监听异常%v", err.Error())
+			return
+		}
+		processingUdp(listener, cfg)
+		return
+	}
+
+	if urlParse.Scheme == "tcp" {
+
+		listener, err := sshClientConn.Listen("tcp", urlParse.Host)
+
+		if err != nil {
+			logger.Errorf("tcp监听异常%v", err.Error())
+			return
+		}
+		processingTcp(listener, cfg)
+		return
+	}
+
+	if urlParse.Scheme == "http" {
+		listener, err := sshClientConn.Listen("tcp", urlParse.Host)
+
+		if err != nil {
+			logger.Errorf("tcp监听异常%v", err.Error())
+			return
+		}
+		//增加应用层协议判断
+		server := &http.Server{Addr: cfg.Ssh.Addr, Handler: app}
+		server.Serve(listener)
+		return
+	}
+
 }
