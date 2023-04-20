@@ -36,3 +36,11 @@ Host = "123.249.115.24:22"
 UserName = "root"
 PrivateKey = "./key/id_rsa"
 Addr = "0.0.0.0:8081"
+
+[proxy.Local5]
+Name = "Local5"
+Desc = "执行JavaScript解释器中断"
+Url = "http://127.0.0.1:8083"
+Proxy = "http://127.0.0.1:8088/api/v2.0.0"
+Root = "./static/"
+Interrupt ="./hook/round.js"

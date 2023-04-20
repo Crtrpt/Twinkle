@@ -45,6 +45,13 @@ func (app *App) InitConfig(ctx context.Context) (res any, err error) {
 	return
 }
 
+func (app *App) Do(resp http.ResponseWriter, r *http.Request, cfg *ProxyConfig, url, RequestURI string) (err error) {
+	if app.ProxyStatic(resp, r, cfg, url, RequestURI) {
+		return
+	}
+	return app.ProxyBackend(resp, r, cfg, url, RequestURI)
+}
+
 func (app *App) ServeHTTP(resp http.ResponseWriter, r *http.Request) {
 	defer func() {
 		err := recover()
@@ -61,10 +68,15 @@ func (app *App) ServeHTTP(resp http.ResponseWriter, r *http.Request) {
 			for k, v := range cfg.Header {
 				resp.Header().Add(k, v)
 			}
-			if app.ProxyStatic(resp, r, cfg, url, url[len(cfg.Url):]) {
-				return
+			var err error
+			if cfg.Interrupt == "" {
+				err = app.Do(resp, r, cfg, url, url[len(cfg.Url):])
+			} else {
+				interrupt, err := NewJavascriptVm(cfg)
+				if err == nil {
+					err = interrupt.Run(app, resp, r, cfg, url, url[len(cfg.Url):])
+				}
 			}
-			err := app.ProxyBackend(resp, r, cfg, url, url[len(cfg.Url):])
 			if err != nil {
 				resp.Write([]byte(err.Error()))
 			}
@@ -74,7 +86,6 @@ func (app *App) ServeHTTP(resp http.ResponseWriter, r *http.Request) {
 
 	resp.Write([]byte("can not find backend serve"))
 }
-
 
 // Run 执行
 func (app *App) Run(ctx context.Context) (res any, err error) {
