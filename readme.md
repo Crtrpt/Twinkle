@@ -39,3 +39,81 @@ go run cmd/twinkle/main.go
 ```
 GatewayPorts yes
 ```
+
+# 配置示例
+```
+# Twinkle 可以实现多个本地代理和远程代理
+# 每个proxy 就是对一个代理的配置
+# 如果有ssh 并且ssh的 auth不为空的话 表示是一个 ssh远程代理 否则为本地代理
+# 当前的配置为一些配置的示例
+[proxy.Local1]
+Name = "Local1"
+Desc = "相同的机器不同的端口"
+# 要代理的http url
+Url = "http://127.0.0.1:8081/api/v1"
+# 要代理到的 后端地址
+Proxy = "http://127.0.0.1:8088/api/v1.0.0"
+# 如果static目录中对应的文件存在的话就输出静态文件 否则请求后端的 返回后端的 请求数据
+Root = "./static/"
+# 返回给前端的 http header 要动态修改的话 用 Interrupt 设置对应的js文件 通过js动态的设置修改配置
+[proxy.Local1.Header]
+ServerName = "twinkle"
+
+[proxy.Local2]
+Name = "Local2"
+Desc = "不同机器相同的后端"
+Url = "http://127.0.0.1:8082/api/v1"
+Proxy = "http://127.0.0.1:8088/api/v1.0.0"
+Root = "./static/"
+[proxy.Local2.Header]
+ServerName = "twinkle"
+
+[proxy.Local3]
+Name = "Local3"
+Desc = "相同机器相同端口不通路径"
+Url = "http://127.0.0.1:8081"
+Proxy = "http://127.0.0.1:8088/api/v2.0.0"
+Root = "./static/"
+
+[proxy.Local4]
+Name = "Local4"
+Desc = "远程机器的代理"
+Url = "http://123.249.115.24:8081"
+Proxy = "http://127.0.0.1:8088/api/v2.0.0"
+Root = "./static/"
+
+[proxy.Local4.ssh]
+Auth = "key"
+Host = "123.249.115.24:22"
+UserName = "root"
+PrivateKey = "./key/id_rsa"
+Addr = "http://0.0.0.0:8081"
+
+[proxy.Local5]
+Name = "Local5"
+Desc = "执行JavaScript解释器中断"
+Url = "http://127.0.0.1:8083"
+Proxy = "http://127.0.0.1:8088/api/v2.0.0"
+Root = "./static/"
+Interrupt ="./hook/round.js"
+
+
+[proxy.Local6]
+Name = "Local6"
+Desc = "tcp代理透传"
+Url = "tcp://127.0.0.1:8086"
+Proxy = "tcp://127.0.0.1:6379"
+
+
+[proxy.Local7]
+Name = "Local7"
+Desc = "ssh tcp 透传代理"
+Url = "tcp://127.0.0.1:8087"
+Proxy = "tcp://127.0.0.1:6379"
+[proxy.Local7.ssh]
+Auth = "key"
+Host = "123.249.115.24:22"
+UserName = "root"
+PrivateKey = "./key/id_rsa"
+Addr = "tcp://0.0.0.0:8082"
+```
