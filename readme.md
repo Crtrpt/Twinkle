@@ -1,4 +1,4 @@
-golang proxy server
+Twinkle
 ---
 [![Go](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml/badge.svg)](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml)
 ---
