@@ -17,5 +17,14 @@
             "program": "${workspaceFolder}/cmd/twinkle/main.go",
             "cwd": "${workspaceFolder}"
         },
+        {
+            "name": "调试udp",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/twinkle_udp_forward/main.go",
+            "args": ["-udp","127.0.0.1:9001"],
+            "cwd": "${workspaceFolder}"
+        },
     ]
 }

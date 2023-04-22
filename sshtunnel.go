@@ -54,7 +54,7 @@ func (app *App) ListenSSHTunnel(cfg ProxyConfig) {
 	}
 
 	if urlParse.Scheme == "udp" {
-		listener, err := sshClientConn.Listen("udp", urlParse.Host)
+		listener, err := sshClientConn.Listen("tcp", urlParse.Host)
 		//暂时不支持的协议
 		if err != nil {
 			logger.Errorf("udp监听异常%v", err.Error())
