@@ -13,6 +13,9 @@ import (
 
 // bytes to int
 func btoi(data []byte) int {
+	if len(data) != 4 {
+		panic("error btoi")
+	}
 	y := 0
 	l := len(data)
 	for i := l - 1; i >= 0; i-- {
