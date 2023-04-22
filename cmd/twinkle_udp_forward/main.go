@@ -26,22 +26,14 @@ func btoi(data []byte) int {
 // int to bytes
 func itob(x int) []byte {
 	buf := bytes.NewBuffer([]byte{})
-	lsb := x & 0xff
+	buf.WriteByte(byte(x & 0xff))
 	x >>= 8
-	buf.WriteByte(byte(lsb))
-
-	lsb = x & 0xff
+	buf.WriteByte(byte(x & 0xff))
 	x >>= 8
-	buf.WriteByte(byte(lsb))
-
-	lsb = x & 0xff
+	buf.WriteByte(byte(x & 0xff))
 	x >>= 8
-	buf.WriteByte(byte(lsb))
-
-	lsb = x & 0xff
+	buf.WriteByte(byte(x & 0xff))
 	x >>= 8
-	buf.WriteByte(byte(lsb))
-
 	return buf.Bytes()
 }
 
