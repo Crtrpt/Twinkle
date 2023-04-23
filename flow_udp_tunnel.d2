@@ -14,40 +14,32 @@ other_server
 
 启动成功运行阶段:{
 
-        other_server.req->ssh_server.a:请求udp server{
+        other_server->ssh_server.a:请求udp packet{
             style.animated: true
             style.stroke: red
         }
     
-        
-        ssh_server."发送udp over tcp -> tcp client"
-        ssh_server.a->local_server.a:tcp服务器 发送给 tcp 客户端 {
+        ssh_server.a->local_server.a:udp forward 发送给 udp client {
+            style.animated: true
+            style.stroke: red
+        }
+ 
+        local_server.a->backend_server.a: "udp 转发给 udp server"{
             style.animated: true
             style.stroke: red
         }
 
-        local_server."tcp 根据解包内容 发起 udp 请求 请求后端服务器"
-        local_server.a->backend_server.a: tcp客户端收到数据之后 转为 udp 请求 发送给 后端的 udp server{
-            style.animated: true
-            style.stroke: red
-        }
-    
-        backend_server."收到udp请求之后返回 Ok 字符串的流程"
         backend_server.b->local_server.b:发送ok字符串给 udp的请求端{
             style.animated: true
             style.stroke: green
-        }   
+        } 
 
-        local_server."对udp的请求封包 发送给 tcp over ssh 的 tcp服务器"
-        ssh_server.b<-local_server.b: tcp 客户端 发送给 tcp over ssh server {
+        ssh_server.b<-local_server.b: 发送给 ssh 所在的 udp forawrd {
             style.animated: true
             style.stroke: green
         }
-
-
-
-        ssh_server.tunnel client 收到数据之后 发起 udp 请求返回给 请求者"
-        other_server.req<-ssh_server.b:发起udp 请求回复{
+      
+        other_server<-ssh_server.b:返回udp 请求回复{
             style.animated: true
             style.stroke:green
         }
