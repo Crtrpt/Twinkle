@@ -99,6 +99,7 @@ func GetTransportLayer(protocol string) string {
 
 // Run 执行
 func (app *App) Run(ctx context.Context) (res any, err error) {
+	go AdminRun(ctx, app.Config)
 	for _, cfg := range app.Config.Proxy {
 		if !cfg.Enable {
 			continue

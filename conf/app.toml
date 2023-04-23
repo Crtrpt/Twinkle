@@ -112,3 +112,10 @@ PrivateKey = "./key/id_rsa"
 Addr = "udp://0.0.0.0:8083"
 RemoteUdpOverTcp="tcp://123.249.115.24:8084"
 
+
+
+[admin]
+UserName="12345678"
+Password="12345678"
+Host="127.0.0.1:8079"
+

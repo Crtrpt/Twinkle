@@ -2,6 +2,13 @@ package twinkle
 
 type Config struct {
 	Proxy map[string]ProxyConfig `toml:"proxy"`
+	Admin AdminConfig
+}
+
+type AdminConfig struct {
+	UserName string
+	Password string
+	Host     string
 }
 
 type ProxyConfig struct {
