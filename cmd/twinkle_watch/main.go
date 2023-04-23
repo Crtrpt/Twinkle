@@ -29,18 +29,20 @@ func runCmd(s string, done chan struct{}) {
 
 	go func() {
 		<-done
+		defer f.Close()
 		if cmd.Process != nil {
 			err := syscall.Kill(cmd.Process.Pid, syscall.SIGKILL)
 			if err != nil {
 				logger.Error("err %v", err)
+				return
 			}
 			_, err = cmd.Process.Wait()
 			if err != nil {
 				logger.Error("err %v", err)
-				os.Exit(1)
+				return
 			}
 		}
-		f.Close()
+
 	}()
 	io.Copy(os.Stdout, f)
 
