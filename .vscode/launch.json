@@ -26,5 +26,14 @@
             "args": ["-udp","127.0.0.1:9001"],
             "cwd": "${workspaceFolder}"
         },
+        {
+            "name": "调试twinkle_watch",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/twinkle_watch/main.go",
+            "args": ["-d","./conf", "-r" ,"top"],
+            "cwd": "${workspaceFolder}"
+        },
     ]
 }

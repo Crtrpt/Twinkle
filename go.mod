@@ -4,6 +4,8 @@ go 1.19
 
 require (
 	github.com/BurntSushi/toml v1.2.1
+	github.com/fsnotify/fsnotify v1.6.0
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/pkg/sftp v1.13.5
 	github.com/robertkrimen/otto v0.2.1
 	github.com/stretchr/testify v1.8.1
@@ -13,8 +15,8 @@ require (
 )
 
 require (
+	github.com/creack/pty v1.1.18 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/julienschmidt/httprouter v1.3.0 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
