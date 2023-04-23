@@ -124,15 +124,9 @@ Proxy = "tcp://127.0.0.1:6379"
 
 [proxy.Local7]
 Name = "Local7"
-Desc = "ssh tcp 透传代理"
+Desc = "udp代理透传"
 # 是否开启代理
 Enable = true   
-Url = "tcp://127.0.0.1:8087"
-Proxy = "tcp://127.0.0.1:6379"
-[proxy.Local7.ssh]
-Auth = "key"
-Host = "123.249.115.24:22"
-UserName = "root"
-PrivateKey = "./key/id_rsa"
-Addr = "tcp://0.0.0.0:8082"
+Url = "udp://127.0.0.1:8086"
+Proxy = "udp://127.0.0.1:9001"
 ```
