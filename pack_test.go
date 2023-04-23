@@ -1,6 +1,7 @@
 package twinkle
 
 import (
+	"net"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ func TestBit(t *testing.T) {
 
 func TestPackAndUnpack(t *testing.T) {
 	role := 0
-	ip := []byte{127, 0, 0, 1}
+	ip := net.IP([]byte{127, 0, 0, 1})
 	port := 9001
 	payload := []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}
 	enc := UDPForwardPacket(role, ip, port, payload)
