@@ -155,31 +155,8 @@ func (app *App) ListenSSHTunnel(cfg ProxyConfig) {
 			logger.Errorf("udp透传需要配置 udp over tcp 代理")
 			return
 		}
-		RemoteUdpOverTcpUrlParse, err := url.Parse(cfg.Ssh.RemoteUdpOverTcp)
-		if err != nil {
-			logger.Errorf("udp 代理隧道解析异常: %s", err)
-			return
-		}
-		logger.Infof("启动 隧道服务器端 %s", RemoteUdpOverTcpUrlParse.Host)
-		//启动上行监听
-		listener, err := sshClientConn.Listen("tcp", RemoteUdpOverTcpUrlParse.Host)
-		//暂时不支持的协议
-		if err != nil {
-			logger.Errorf("udp监听异常%v", err.Error())
-			return
-		}
-		go processingTunnelTcpServer(listener, cfg)
 
-		logger.Infof("启动 隧道客户端 %s", RemoteUdpOverTcpUrlParse.Host)
-		client, err := net.Dial("tcp", RemoteUdpOverTcpUrlParse.Host)
-		if err != nil {
-			logger.Errorf("隧道客户端异常%v", err.Error())
-			return
-		}
-
-		go processingTunnelTcpClient(client, cfg)
-
-		// startForwardServer(sshClientConn, cfg)
+		startForwardServer(sshClientConn, cfg)
 
 		return
 	}

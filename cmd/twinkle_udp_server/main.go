@@ -16,13 +16,21 @@ func processingUdp(conn *net.UDPConn, limit chan struct{}) {
 		}
 		limit <- struct{}{}
 	}()
-	buf := make([]byte, 1024)
-	_, addr, err := conn.ReadFromUDP(buf)
-	if err != nil {
-		logger.Errorf("err %v", err)
+	for {
+		buf := make([]byte, 1024)
+		l, addr, err := conn.ReadFromUDP(buf[:])
+		if err != nil {
+			logger.Errorf("err %v", err)
+			return
+		}
+		logger.Infof("request  %s %d %s", addr.IP, addr.Port, string(buf[:l]))
+		logger.Infof("response %s %d %s", addr.IP, addr.Port, []byte("ok"))
+		_, err = conn.WriteToUDP([]byte("ok"), addr)
+		if err != nil {
+			logger.Infof("err ", err)
+			break
+		}
 	}
-	logger.Infof("response", addr)
-	conn.WriteToUDP([]byte("ok"), addr)
 }
 
 func main() {
@@ -35,7 +43,6 @@ func main() {
 		fmt.Println("read from connect failed, err:" + err.Error())
 		os.Exit(1)
 	}
-	limit <- struct{}{}
 	limit <- struct{}{}
 	limit <- struct{}{}
 	logger.Infof("listen:%s", addr)

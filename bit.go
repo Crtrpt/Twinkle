@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+func BitGetRange(v byte, start, end int) int {
+	panic("暂时没有实现")
+}
+
 // 获取bit位
 func BitGet(v byte, offset int) bool {
 	return v&(1<<offset) != 0

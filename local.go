@@ -1,6 +1,7 @@
 package twinkle
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -96,103 +97,126 @@ func processTcpConn(conn net.Conn, cfg ProxyConfig) {
 	targetExit <- struct{}{}
 }
 
-// 处理udp链接 udp over tcp over ssh
-func processUdpConn(conn net.Conn, cfg ProxyConfig) {
+func processUdpConn(clientConn *net.UDPConn, cfg ProxyConfig, limit chan struct{}) {
 	defer func() {
 		err := recover()
 		if err != nil {
 			logger.Info("panic")
 		}
+		limit <- struct{}{}
 	}()
-	defer func() {
-		logger.Info("exit")
-	}()
-	defer conn.Close()
 
+	defer clientConn.Close()
 	urlBackend, err := url.Parse(cfg.Proxy)
 
-	backendConn, err := net.Dial("tcp", urlBackend.Host)
+	backendUdpConn, err := net.Dial("udp", urlBackend.Host)
+	defer clientConn.Close()
 	if err != nil {
-		logger.Infof("tcp backend error", err)
+		logger.Infof("udp backend error", err)
 		return
 	}
-	defer backendConn.Close()
-	logger.Infof("dial:%s", cfg.Proxy)
+
 	do := make(chan struct{}, 0)
 	sourceExit := make(chan struct{}, 1)
 	targetExit := make(chan struct{}, 1)
 
-	go func() {
+	var buf = make([]byte, 1024)
+
+	len, clientAddr, err := clientConn.ReadFromUDP(buf[:])
+
+	if err != nil {
+		logger.Errorf("err client read %s addr %s", err, clientAddr)
+		return
+	}
+
+	len, err = backendUdpConn.Write(buf[0:len])
+	if err != nil {
+		logger.Errorf("err backend write %s", err)
+		return
+	}
+	if err == nil {
+		logger.Infof("client:%s->local:%s->backend:%s", clientAddr, backendUdpConn.LocalAddr(), backendUdpConn.RemoteAddr())
+	}
+
+	go func(clientAddr *net.UDPAddr) {
 		defer func() {
 			do <- struct{}{}
-			logger.Infof("source->target exit")
+			logger.Infof("local->backend exit")
 		}()
 		for {
 			select {
 			case _ = <-sourceExit:
 				return
 			default:
-				conn.SetDeadline(time.Now().Add(10 * time.Second))
-				backendConn.SetDeadline(time.Now().Add(10 * time.Second))
-				//source->target
+
+				//local->backend
 				var buf = make([]byte, 1024)
-				len, err := conn.Read(buf[:])
+				//获取客户端IP地址和端口号
+				len, addr, err := clientConn.ReadFromUDP(buf[:])
 				if err != nil {
+					logger.Errorf("err client read %s addr %s", err, addr)
 					return
 				}
 				if len == 0 {
 					continue
 				}
-				len, err = backendConn.Write(buf[0:len])
+
+				len, err = backendUdpConn.Write(buf[0:len])
 				if err != nil {
+					logger.Errorf("err backend write %s", err)
 					return
 				}
+				logger.Infof("client:%s->local:%s->backend:%s", clientAddr, backendUdpConn.LocalAddr(), backendUdpConn.RemoteAddr())
 			}
 		}
-	}()
-	go func() {
+	}(clientAddr)
+	go func(clientAddr *net.UDPAddr) {
 		defer func() {
 			do <- struct{}{}
-			logger.Infof("target->source exit")
+			logger.Infof("backend->local exit")
 		}()
 		for {
 			select {
 			case _ = <-targetExit:
 				return
 			default:
-				conn.SetDeadline(time.Now().Add(10 * time.Second))
-				backendConn.SetDeadline(time.Now().Add(10 * time.Second))
-				//target->source
+				if clientAddr == nil {
+
+					continue
+				}
+
 				var buf = make([]byte, 1024)
-				len, err := backendConn.Read(buf[:])
+				len, err := backendUdpConn.Read(buf[:])
 				if err != nil {
+					logger.Errorf("err backend read %s", err)
 					return
 				}
+				// logger.Errorf("read data  addr %s", backendUdpConn.LocalAddr())
 				if len == 0 {
 					continue
 				}
-				len, err = conn.Write(buf[0:len])
+				_, err = clientConn.WriteToUDP(buf, clientAddr)
 				if err != nil {
+					logger.Errorf("err client write %s", err)
 					return
 				}
+				logger.Infof("backend:%s->local:%s->client:%s", backendUdpConn.RemoteAddr(), backendUdpConn.LocalAddr(), clientAddr)
 			}
 		}
-	}()
-	_ = <-do
+	}(clientAddr)
+	<-do
 	sourceExit <- struct{}{}
 	targetExit <- struct{}{}
 }
 
-// TODO 实现udp协议的透传 udp->tcp
-func processingUdp(listener net.Listener, cfg ProxyConfig) {
-	for {
-		conn, err := (listener).Accept()
-		if err != nil {
-			logger.Error(err)
-			break
-		}
+func processingUdp(conn *net.UDPConn, cfg ProxyConfig) {
 
-		go processUdpConn(conn, cfg)
+	//增加并发处理的能力
+	limit := make(chan struct{}, 3)
+	limit <- struct{}{}
+	for {
+		<-limit
+		processUdpConn(conn, cfg, limit)
 	}
 }
 
@@ -213,19 +237,27 @@ func processingTcp(listener net.Listener, cfg ProxyConfig) {
 func (app *App) ListenHttpPort(scheme string, cfg ProxyConfig, urlp *url.URL) {
 	addr := urlp.Host
 
-	logger.Infof("localhost:%s", cfg.Url)
+	logger.Infof("localhost:%-40s proxy:%-40s", cfg.Url, cfg.Proxy)
 	if scheme == "udp" {
-		listener, err := net.Listen("udp", addr)
+		udpAddr, err := net.ResolveUDPAddr("udp", addr)
 		if err != nil {
-			logger.Errorf("监听服务器异常 %s %v", addr, err)
+			logger.Errorf("解析udp协议出现错误 %s %v", addr, err)
+			return
 		}
-		go processingUdp(listener, cfg)
+		udpConn, err := net.ListenUDP("udp", udpAddr)
+		if err != nil {
+			logger.Errorf("监听服务异常 %s %v", addr, err)
+			return
+		}
+		fmt.Printf("启动udp服务器%s\r\n", addr)
+		go processingUdp(udpConn, cfg)
 		return
 	}
 	if scheme == "tcp" {
 		listener, err := net.Listen("tcp", addr)
 		if err != nil {
 			logger.Errorf("监听服务器异常 %s %v", addr, err)
+			return
 		}
 		go processingTcp(listener, cfg)
 		return

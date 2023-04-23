@@ -74,29 +74,36 @@ Enable = true
 Url = "tcp://127.0.0.1:8086"
 Proxy = "tcp://127.0.0.1:6379"
 
-
 [proxy.Local7]
 Name = "Local7"
-Desc = "ssh tcp 透传代理"
+Desc = "udp代理透传"
 # 是否开启代理
 Enable = true   
+Url = "udp://127.0.0.1:8086"
+Proxy = "udp://127.0.0.1:9001"
+
+[proxy.Local8]
+Name = "Local8"
+Desc = "ssh tcp 透传代理"
+# 是否开启代理
+Enable = false   
 Url = "tcp://127.0.0.1:8087"
 Proxy = "tcp://127.0.0.1:6379"
-[proxy.Local7.ssh]
+[proxy.Local8.ssh]
 Auth = "key"
 Host = "123.249.115.24:22"
 UserName = "root"
 PrivateKey = "./key/id_rsa"
 Addr = "tcp://0.0.0.0:8082"
 
-[proxy.Local8]
-Name = "Local8"
+[proxy.Local9]
+Name = "Local9"
 Desc = "ssh udp over tcp 透传代理"
-Enable = true   
+Enable = false   
 Url = "tcp://127.0.0.1:8088"
 #后端udp服务器地址
 Proxy = "udp://127.0.0.1:9001"
-[proxy.Local8.ssh]
+[proxy.Local9.ssh]
 Auth = "key"
 Host = "123.249.115.24:22"
 UserName = "root"

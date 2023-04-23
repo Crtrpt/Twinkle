@@ -20,6 +20,9 @@ go run cmd/twinkle/main.go
 ## 流程图
 ![流程图](./flow.svg "工作流程图")
 
+## ssh 代理转发流程图
+![流程图](./flow_udp_tunnel.svg "工作流程图")
+
 ## 特性
 - ssh隧道代理
 - 本地代理
