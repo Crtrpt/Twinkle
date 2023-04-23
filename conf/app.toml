@@ -89,3 +89,19 @@ UserName = "root"
 PrivateKey = "./key/id_rsa"
 Addr = "tcp://0.0.0.0:8082"
 
+[proxy.Local8]
+Name = "Local8"
+Desc = "ssh udp over tcp 透传代理"
+Enable = true   
+Url = "tcp://127.0.0.1:8088"
+#后端udp服务器地址
+Proxy = "udp://127.0.0.1:9001"
+[proxy.Local8.ssh]
+Auth = "key"
+Host = "123.249.115.24:22"
+UserName = "root"
+PrivateKey = "./key/id_rsa"
+# 远程服务器对外监听的udp端口
+Addr = "udp://0.0.0.0:8083"
+RemoteUdpOverTcp="tcp://123.249.115.24:8084"
+

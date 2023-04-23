@@ -183,19 +183,6 @@ func processUdpConn(conn net.Conn, cfg ProxyConfig) {
 	targetExit <- struct{}{}
 }
 
-// 处理tcp 监听
-func processingTcp(listener net.Listener, cfg ProxyConfig) {
-	for {
-		conn, err := (listener).Accept()
-		if err != nil {
-			logger.Error(err)
-			break
-		}
-
-		go processTcpConn(conn, cfg)
-	}
-}
-
 // TODO 实现udp协议的透传 udp->tcp
 func processingUdp(listener net.Listener, cfg ProxyConfig) {
 	for {
@@ -206,6 +193,19 @@ func processingUdp(listener net.Listener, cfg ProxyConfig) {
 		}
 
 		go processUdpConn(conn, cfg)
+	}
+}
+
+// 处理tcp 监听
+func processingTcp(listener net.Listener, cfg ProxyConfig) {
+	for {
+		conn, err := (listener).Accept()
+		if err != nil {
+			logger.Error(err)
+			break
+		}
+
+		go processTcpConn(conn, cfg)
 	}
 }
 

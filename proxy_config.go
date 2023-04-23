@@ -15,12 +15,13 @@ type ProxyConfig struct {
 	Root      string            //静态文件目录 如果不存在 访问proxy的 后端服务器
 	Interrupt string            //中断文件路径
 	Ssh       struct {
-		Auth       string //password key
-		Host       string
-		UserName   string //用户名
-		Password   string //密码
-		PrivateKey string //私钥登陆
-		Addr       string //要监听的地址
-		Timeout    int    //超时秒数
+		Auth             string //password key
+		Host             string
+		UserName         string //用户名
+		Password         string //密码
+		PrivateKey       string //私钥登陆
+		Addr             string //要监听的地址
+		Timeout          int    //超时秒数
+		RemoteUdpOverTcp string //处理udp的转发
 	} `toml:"ssh"`
 }
