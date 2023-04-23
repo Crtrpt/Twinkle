@@ -3,7 +3,6 @@ package twinkle
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"net"
 )
 
@@ -14,20 +13,15 @@ func UDPForwardPacket(role int, ip net.IP, port int, payload []byte) []byte {
 	ctrl := byte(0)
 	//ip类型
 	if len(ip) == 4 {
-		ctrl <<= 1
+		ctrl = 0
 	} else {
-		ctrl := ctrl | 0b0000_0001
-		ctrl <<= 1
+		ctrl = BitSet(ctrl, 0)
 	}
 	//udp 客户端发送方角色
-	if role == 0 {
-		ctrl = ctrl | 0b0000_0000
-	}
-	//down
 	if role == 1 {
-		ctrl = ctrl | 0b0000_0010
+		ctrl = BitSet(ctrl, 1)
 	}
-	fmt.Printf("ctrl: %b", ctrl)
+	// fmt.Printf("ctrl: %b", ctrl)
 	data.WriteByte(ctrl)
 	data.Write(ip)
 	data.Write(Itob(port))
@@ -58,23 +52,26 @@ func UDPForwardUnPacket(data []byte) (role int, ip net.IP, port int, payload []b
 	//控制位
 	ctrl := data[start+offset+1]
 
-	isIpv4 := BitGet(ctrl, 0)
+	isIpv6 := BitGet(ctrl, 0)
 	isRole := BitGet(ctrl, 1)
 	if isRole {
 		role = 1
 	} else {
 		role = 0
 	}
+	if (l + 5) != len(data) {
+		err = errors.New("数据包长度错误")
+		return
+	}
 
-	if !isIpv4 { //ipv4
-		ip = data[start+offset+2 : start+offset+6]
-		fmt.Printf("%v", ip)
-		port = Btoi(data[start+offset+6 : start+offset+9])
-		payload = data[start+offset+10 : l+5]
-	} else { //ipv6
+	if isIpv6 { //ipv6
 		ip = data[start+offset+2 : start+offset+18]
 		port = Btoi(data[start+offset+18 : start+offset+21])
-		payload = data[start+offset+22 : l+4]
+		payload = data[start+offset+22 : l+5]
+	} else { //ipv4
+		ip = data[start+offset+2 : start+offset+6]
+		port = Btoi(data[start+offset+6 : start+offset+9])
+		payload = data[start+offset+10 : l+5]
 	}
 
 	return
