@@ -1,4 +1,6 @@
 Twinkle
+#
+这个工具只能开发环境使用 请不要用于生产环境
 ---
 [![Go](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml/badge.svg)](https://github.com/Crtrpt/twinkle/actions/workflows/go.yml)
 ---
