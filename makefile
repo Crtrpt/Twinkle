@@ -9,6 +9,11 @@ build:
 	go build -race -ldflags "-s -w"  -gcflags "-m -l"  -o bin/twinkle  cmd/twinkle/main.go
 	chmod +x bin/twinkle
 
+build_doc:
+	mdbook build doc
+	mkdir -p bin/doc
+	cp -rf doc/book/* bin/doc
+
 build_test_server:
 	go build -ldflags "-s -w" -o bin/twinkle_http_server  cmd/twinkle_http_server/main.go
 	chmod +x bin/twinkle_http_server

@@ -30,15 +30,15 @@ func runCmd(s string, done chan struct{}) {
 	go func() {
 		<-done
 		defer f.Close()
-		if cmd.Process != nil {
+		if cmd.Process != nil && cmd.ProcessState != nil {
 			err := syscall.Kill(cmd.Process.Pid, syscall.SIGKILL)
 			if err != nil {
-				logger.Error("err %v", err)
+				logger.Error("err kill %v", err)
 				return
 			}
 			_, err = cmd.Process.Wait()
 			if err != nil {
-				logger.Error("err %v", err)
+				logger.Error("err wait %v", err)
 				return
 			}
 		}

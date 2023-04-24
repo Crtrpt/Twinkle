@@ -17,7 +17,13 @@ type Admin struct {
 }
 
 // 获取首页静态文件
+func Doc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	http.ServeFile(w, r, "./doc/book/")
+}
+
+// 获取首页静态文件
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+
 	w.Write([]byte("首页"))
 }
 
@@ -57,6 +63,7 @@ func AdminRun(ctx context.Context, cfg *Config) {
 	router := httprouter.New()
 
 	router.GET("/", Index)
+	router.ServeFiles("/doc/*filepath", http.Dir("./doc/book"))
 	router.GET("/config", admin.BaseAuth(admin.GetConfig))
 
 	err := http.ListenAndServe(cfg.Admin.Host, router)

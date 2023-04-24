@@ -234,7 +234,7 @@ func processingTcp(listener net.Listener, cfg ProxyConfig) {
 }
 
 // 监听本地端口
-func (app *App) ListenHttpPort(scheme string, cfg ProxyConfig, urlp *url.URL) {
+func (app *App) ListenLocalPort(scheme string, cfg ProxyConfig, urlp *url.URL) {
 	addr := urlp.Host
 
 	logger.Infof("localhost:%-40s proxy:%-40s", cfg.Url, cfg.Proxy)

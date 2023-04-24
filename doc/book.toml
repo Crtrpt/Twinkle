@@ -1,0 +1,12 @@
+[book]
+authors = ["jingdor"]
+language = "cn"
+multilingual = false
+src = "src"
+title = "Twinkle  文档"
+
+
+[preprocessor.d2]
+layout = "dagre"
+inline = true
+output-dir = "d2"

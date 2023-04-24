@@ -125,7 +125,7 @@ func (app *App) Run(ctx context.Context) (res any, err error) {
 				go app.ListenSSHTunnel(cfg)
 			} else {
 				app.ListenMap[key] = make(map[string]any, 0)
-				go app.ListenHttpPort(urlP.Scheme, cfg, urlP)
+				go app.ListenLocalPort(urlP.Scheme, cfg, urlP)
 			}
 
 		}
