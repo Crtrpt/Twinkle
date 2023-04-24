@@ -27,6 +27,15 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "调试udp_client",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/twinkle_udp_forward/cmd/down.go",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "调试twinkle_watch",
             "type": "go",
             "request": "launch",

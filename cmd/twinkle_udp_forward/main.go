@@ -2,89 +2,142 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"net"
-	"os"
 
 	"github.com/Crtrpt/twinkle"
 	"github.com/Crtrpt/twinkle/logger"
 )
 
-// 处理
-func processingUdpServer(udp *string, done chan struct{}, forward chan []byte) {
+func processingDown(udp *string, done chan struct{}, forward chan []byte) {
 	defer func() {
 		done <- struct{}{}
 	}()
 	udpAddr, err := net.ResolveUDPAddr("udp", *udp)
-	conn, err := net.ListenUDP("udp", udpAddr)
-	defer conn.Close()
 	if err != nil {
-		fmt.Println("read from connect failed, err:" + err.Error())
-		os.Exit(1)
-	}
-	logger.Infof("listen:%s", *udp)
-	for {
-		processingUdp(conn, forward)
-	}
-}
-
-// 处理udp数据包
-func processingUdp(conn *net.UDPConn, forward chan []byte) {
-	defer func() {
-		if err := recover(); err != nil {
-			return
-		}
-	}()
-	buf := make([]byte, 1024)
-	l, addr, err := conn.ReadFromUDP(buf)
-	if err != nil {
-		logger.Errorf("读取udp 数据包出现错误%s", err.Error())
+		logger.Errorf("udp 解析错误%s", err.Error())
 		return
 	}
-	forward <- twinkle.UDPForwardPacket(0, addr.IP, addr.Port, buf[:l])
+	conn, err := net.ListenUDP("udp", udpAddr)
+	if err != nil {
+		logger.Errorf("udp 监听错误%s", err.Error())
+		return
+	}
+	if *v {
+		logger.Infof("listen udp:%s", *udp)
+	}
+
+	go func() {
+		for {
+			select {
+			case data, ok := <-downStream:
+				if ok {
+					_, err = conn.WriteToUDP(data, downAddr)
+					if err != nil {
+						logger.Errorf("写入downclient 出现异常%s", err.Error())
+					}
+				}
+			}
+		}
+	}()
+	for {
+		buf := make([]byte, 1024)
+		l, addr, err := conn.ReadFromUDP(buf)
+		if err != nil {
+			logger.Errorf("读取udp 数据包出现错误%s", err.Error())
+		}
+
+		if l == 4 && buf[0] == (*key)[0] && buf[1] == (*key)[1] && buf[2] == (*key)[2] && buf[3] == (*key)[3] {
+			if *v {
+				logger.Infof("update downclient:%s", addr)
+			}
+			downAddr = addr
+			// _, err = conn.WriteToUDP([]byte("ok"), addr)
+			continue
+		}
+		upstream <- buf[:l]
+	}
+
 }
 
-func processingTcpClient(tcp *string, done chan struct{}, forward chan []byte) {
+// 处理
+func processingUp(udp *string, done chan struct{}, forward chan []byte) {
 	defer func() {
 		done <- struct{}{}
 	}()
-
-	client, err := net.Dial("tcp", *tcp)
+	udpAddr, err := net.ResolveUDPAddr("udp", *udp)
 	if err != nil {
-		os.Exit(1)
+		logger.Errorf("udp 解析错误%s", err.Error())
+		return
 	}
-	defer client.Close()
+	conn, err := net.ListenUDP("udp", udpAddr)
+	if err != nil {
+		logger.Errorf("udp 监听错误%s", err.Error())
+		return
+	}
+	defer conn.Close()
+	if *v {
+		logger.Infof("listen udp:%s", *udp)
+	}
 
-	go func(client net.Conn) {
-		//读取tcp客户端但会的数据根据pack
-		// TODO 发送给指定的udp服务器
+	go func() {
+		for {
+			buf := make([]byte, 1024)
+			l, addr, err := conn.ReadFromUDP(buf)
+			if err != nil {
+				logger.Errorf("读取udp 数据包出现错误%s", err.Error())
+				break
+			}
 
-	}(client)
+			downStream <- twinkle.UDPForwardPacket(0, addr.IP, addr.Port, buf[:l])
+		}
+	}()
+
 	for {
 		select {
-		case p, ok := <-forward:
-			//转发数据包
+		case data, ok := <-upstream:
 			if ok {
-				// fmt.Printf("转发数据包")
-				client.Write(p)
+				_, ip, port, payload, err := twinkle.UDPForwardUnPacket(data)
+				if err != nil {
+					logger.Errorf("udp 解包出现错误%s", err.Error())
+					break
+				}
+				logger.Infof("-> %s:%d", ip, port)
+				_, err = conn.WriteTo(payload, &net.UDPAddr{IP: ip, Port: port})
+				if err != nil {
+					logger.Errorf("写入upclient 出现异常%s", err.Error())
+				}
 			}
 		}
 	}
 
 }
 
-func processingTcp() {
+var key *string
+var v, vv, vvv *bool
 
-}
+var downAddr *net.UDPAddr
+
+var downStream chan []byte
+var upstream chan []byte
 
 func main() {
-	udp := flag.String("udp", "", "要监听的udp服务器")
-	tcp := flag.String("tcp", "", "要转发的tcp服务器")
+	udp := flag.String("udp", "", "对外暴露的udp地址")
+	udp_down := flag.String("udp_down", "", "对外暴露的udp地址")
+	key = flag.String("key", "twin", "对外暴露的udp地址")
+
+	v = flag.Bool("v", false, "v")
+	vv = flag.Bool("vv", false, "v")
+	vvv = flag.Bool("vvv", false, "vvv")
+
 	flag.Parse()
 	done := make(chan struct{}, 0)
 	forword := make(chan []byte, 1000)
-	go processingTcpClient(tcp, done, forword)
-	go processingUdpServer(udp, done, forword)
+
+	downStream = make(chan []byte, 0)
+	upstream = make(chan []byte, 0)
+
+	go processingDown(udp_down, done, forword)
+	go processingUp(udp, done, forword)
 	_ = <-done
 	println("end===")
 
