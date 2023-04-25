@@ -132,3 +132,8 @@ Enable = true
 Url = "udp://127.0.0.1:8086"
 Proxy = "udp://127.0.0.1:9001"
 ```
+
+
+
+## 仪表盘截图
+![仪表盘](./doc/src/assets/dashboard.png "仪表盘")
