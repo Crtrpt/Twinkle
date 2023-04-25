@@ -21,9 +21,9 @@ jobs:
       with:
         node-version: 18
         cache: 'npm'
-      - run: npm ci
-      - run: npm test
-      - run: npm build
+      run: npm ci
+      run: npm test
+      run: npm build
 
     - name: Set up Go
       uses: actions/setup-go@v3
