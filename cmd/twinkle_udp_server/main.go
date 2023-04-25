@@ -25,7 +25,7 @@ func processingUdp(conn *net.UDPConn, limit chan struct{}) {
 		}
 		logger.Infof("request  %s %d %s", addr.IP, addr.Port, string(buf[:l]))
 		logger.Infof("response %s %d %s", addr.IP, addr.Port, []byte("ok"))
-		_, err = conn.WriteToUDP([]byte("ok"), addr)
+		_, err = conn.WriteToUDP(append([]byte("ok:"), string(buf[:l])...), addr)
 		if err != nil {
 			logger.Infof("err ", err)
 			break

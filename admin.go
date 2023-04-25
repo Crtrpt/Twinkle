@@ -21,10 +21,10 @@ func Doc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	http.ServeFile(w, r, "./doc/book/")
 }
 
-// 获取首页静态文件
+// 重定向到dashboard入口
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-
-	w.Write([]byte("首页"))
+	w.Header().Set("Location", `/index/index.html`)
+	w.WriteHeader(301)
 }
 
 // 获取配置信息
@@ -63,8 +63,9 @@ func AdminRun(ctx context.Context, cfg *Config) {
 	router := httprouter.New()
 
 	router.GET("/", Index)
+	router.ServeFiles("/index/*filepath", http.Dir("./dist"))
 	router.ServeFiles("/doc/*filepath", http.Dir("./doc/book"))
-	router.GET("/config", admin.BaseAuth(admin.GetConfig))
+	router.GET("/api", admin.BaseAuth(admin.GetConfig))
 
 	err := http.ListenAndServe(cfg.Admin.Host, router)
 	if err != nil {

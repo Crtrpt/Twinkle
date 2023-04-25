@@ -1,9 +1,15 @@
-all:default_config build build_test_server build_forward
+all:default_config build_dashboard build build_test_server build_forward 
 
 build_forward:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w"  -gcflags "-m -l"  -o bin/twinkle_udp_forward  cmd/twinkle_udp_forward/main.go
 	chmod +x bin/twinkle_udp_forward
 
+
+build_dashboard:
+	mkdir -p bin/dist
+	cd dashboard && npm run build
+	mkdir -p bin/dist
+	cp -rf dist/* bin/dist
 
 build:
 	go build -race -ldflags "-s -w"  -gcflags "-m -l"  -o bin/twinkle  cmd/twinkle/main.go

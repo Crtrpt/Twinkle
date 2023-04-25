@@ -1,0 +1,9 @@
+2023-04-25T14:32:10.377+0800	info	http_bridged/local.go:240	localhost:udp://127.0.0.1:8086                     proxy:udp://127.0.0.1:9001                    
+2023-04-25T14:32:10.377+0800	info	http_bridged/admin.go:56	启动admin 管理端127.0.0.1:8079
+2023-04-25T14:32:10.377+0800	info	http_bridged/local.go:240	localhost:http://127.0.0.1:8083                    proxy:http://127.0.0.1:8088/api/v2.0.0        
+2023-04-25T14:32:10.377+0800	info	http_bridged/local.go:240	localhost:http://127.0.0.1:8082/api/v1             proxy:http://127.0.0.1:8088/api/v1.0.0        
+2023-04-25T14:32:10.377+0800	info	http_bridged/local.go:240	localhost:http://127.0.0.1:8081/api/v1             proxy:http://127.0.0.1:8088/api/v1.0.0        
+2023-04-25T14:32:10.377+0800	info	http_bridged/local.go:240	localhost:tcp://127.0.0.1:8086                     proxy:tcp://127.0.0.1:6379                    
+启动udp服务器127.0.0.1:8086
+2023-04-25T14:32:10.593+0800	info	http_bridged/sshtunnel.go:144	remote:123.249.115.24:22 http://0.0.0.0:8081
+2023-04-25T14:32:38.636+0800	info	http_bridged/app.go:143	stop
